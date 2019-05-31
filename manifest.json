@@ -1,0 +1,17 @@
+{
+  "name": "Word Blitz Bot",
+  "description": "Facebook Word Blitz autoplayer",
+  "version": "1.0.0",
+  "browser_action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://apps-2211386328877300.apps.fbsbx.com/*"],
+      "js": ["content.js", "solver.js"],
+      "all_frames": true
+    }
+  ],
+  "web_accessible_resources": [ "inject.js" ],
+  "manifest_version": 2
+}
