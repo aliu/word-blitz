@@ -1,5 +1,6 @@
 const boards = new Map()
 let running = false
+let delay = 50
 
 window.addEventListener('onBoardData', (data) => {
   for (const board of data.detail) {
@@ -9,6 +10,7 @@ window.addEventListener('onBoardData', (data) => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.message === 'start') start()
+  if (request.message === 'speed') delay = request.speed
 })
 
 async function start () {
@@ -28,7 +30,7 @@ async function start () {
   for (const path of paths) {
     game.dispatchEvent(new MouseEvent('mousedown', data.positions[path[0]]))
     for (const idx of path) {
-      await sleep(50)
+      await sleep(delay)
       game.dispatchEvent(new MouseEvent('mousemove', data.positions[idx]))
     }
     game.dispatchEvent(new MouseEvent('mouseup', data.positions[path[path.length - 1]]))
