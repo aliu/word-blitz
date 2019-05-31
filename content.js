@@ -20,20 +20,17 @@ async function start () {
   running = true
 
   const tiles = [...document.getElementsByClassName('letter-brick')]
-  const data = getTileData(tiles)
-
-  const letters = data.letters.join('')
-  const words = boards.get(letters)
-
+  const { letters, points } = getTileData(tiles)
+  const words = boards.get(letters.join(''))
   const paths = solve(letters, words)
 
   for (const path of paths) {
-    game.dispatchEvent(new MouseEvent('mousedown', data.positions[path[0]]))
+    game.dispatchEvent(new MouseEvent('mousedown', getPosition(tiles[path[0]])))
     for (const idx of path) {
       await sleep(delay)
-      game.dispatchEvent(new MouseEvent('mousemove', data.positions[idx]))
+      game.dispatchEvent(new MouseEvent('mousemove', getPosition(tiles[idx])))
     }
-    game.dispatchEvent(new MouseEvent('mouseup', data.positions[path[path.length - 1]]))
+    game.dispatchEvent(new MouseEvent('mouseup', getPosition(tiles[path[path.length - 1]])))
   }
 
   running = false
@@ -42,22 +39,23 @@ async function start () {
 function getTileData (tiles) {
   const data = {
     letters: [],
-    points: [],
-    positions:[]
+    points: []
   }
 
   for (const tile of tiles) {
     data.letters.push(tile.getElementsByClassName('letter')[0].innerText)
     data.points.push(tile.getElementsByClassName('points')[0].innerText)
-
-    const rect = tile.getBoundingClientRect()
-    data.positions.push({
-      clientX: (rect.left + rect.right) / 2,
-      clientY: (rect.top + rect.bottom) / 2
-    })
   }
 
   return data
+}
+
+function getPosition (tile) {
+  const rect = tile.getBoundingClientRect()
+  return {
+    clientX: (rect.left + rect.right) / 2,
+    clientY: (rect.top + rect.bottom) / 2
+  }
 }
 
 function sleep (ms) {
